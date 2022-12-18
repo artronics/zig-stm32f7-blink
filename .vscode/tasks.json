@@ -22,6 +22,16 @@
             }
         },
         {
+            "label": "flash",
+            "type": "shell",
+            "command": "zig build flash",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
             "label": "run main tests",
             "type": "shell",
             "command": "zig test ${workspaceFolder}/src/main.zig",
