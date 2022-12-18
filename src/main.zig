@@ -1,7 +1,3 @@
-// export fn Reset_Handler() void {
-
-// }
-
 export fn main() u32 {
     return 0;
 }
