@@ -8,6 +8,16 @@
             "problemMatcher": [],
             "group": {
                 "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "openocd",
+            "type": "shell",
+            "command": "zig build openocd",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
                 "isDefault": false
             }
         },
@@ -18,7 +28,7 @@
             "problemMatcher": [],
             "group": {
                 "kind": "build",
-                "isDefault": true
+                "isDefault": false
             }
         },
         {
@@ -28,7 +38,7 @@
             "problemMatcher": [],
             "group": {
                 "kind": "build",
-                "isDefault": true
+                "isDefault": false
             }
         },
         {
@@ -38,7 +48,7 @@
             "problemMatcher": [],
             "group": {
                 "kind": "test",
-                "isDefault": true
+                "isDefault": false
             }
         }
     ]

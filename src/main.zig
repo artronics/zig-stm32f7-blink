@@ -6,7 +6,11 @@ export fn main() u32 {
     return 0;
 }
 
-export fn SystemInit() void {
+export fn SystemInit() callconv(.C) void {
+    
+}
+
+export fn HardFault_Handler() callconv(.C) void {
     while(true){}
 }
 

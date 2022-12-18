@@ -5,31 +5,20 @@ const CrossTarget = std.zig.CrossTarget;
 pub fn build(b: *std.build.Builder) void {
     const target = CrossTarget{
         .cpu_arch = Target.Cpu.Arch.thumb,
-        // .cpu_model = .{.explicit = &cpu_model},
         .cpu_model = .{ .explicit = &Target.arm.cpu.cortex_m7 },
         .os_tag = Target.Os.Tag.freestanding,
         .abi = Target.Abi.eabi,
     };
     const mode = b.standardReleaseOptions();
 
-    // const elf = b.addExecutable("zig-stm32f7-blink.elf", "src/startup.zig");
     const elf = b.addExecutable("zig-stm32f7-blink.elf", "src/main.zig");
     elf.setTarget(target);
     elf.setBuildMode(mode);
 
     b.default_step.dependOn(&elf.step);
 
-    const startup_obj = b.addObject("startup", thisDir() ++ "/startup_stm32f767xx.o");
-    elf.addObject(startup_obj);
-    // const main_obj = b.addObject("main", "/Users/jalal/projects/embedded/arm/nucleo-f7-example/build/main.o");
-    // elf.addObject(main_obj);
-    // const vector_obj = b.addObject("vector", "src/vector.zig");
-    // vector_obj.setTarget(target);
-    // vector_obj.setBuildMode(mode);
-    // elf.addObject(vector_obj);
-
     elf.setLinkerScriptPath(.{ .path = "data/STM32F767.ld" });
-    // elf.addAssemblyFile("src/startup_stm32f767xx.s");
+    elf.addAssemblyFile("src/startup_stm32f767xx.s");
 
     elf.install();
 
@@ -42,8 +31,6 @@ pub fn build(b: *std.build.Builder) void {
 
     // TODO: use build api to get the path
     const elf_path = thisDir() ++ "/zig-out/bin/zig-stm32f7-blink.elf";
-    // const elf_path = "/Users/jalal/projects/embedded/arm/nucleo-f7-example/build/nucleo-f7-example.elf";
-    // std.log.debug("path {s}", b.getInstallPath());
 
     // zig fmt: off
     const flash_cmd = b.addSystemCommand(&[_][]const u8{
@@ -52,13 +39,11 @@ pub fn build(b: *std.build.Builder) void {
         "-f", openocd_board,
 
         "-c", "gdb_port disabled", "-c", "tcl_port disabled",
-        // "-c", b.fmt("program {s}", .{b.getInstallPath(bin.dest_dir, bin.dest_filename)}),
         "-c", b.fmt("program {s}", .{elf_path}),
         "-c", "reset", "-c", "shutdown"
     });
     // zig fmt: on
 
-    flash_cmd.step.dependOn(&bin.step);
     flash_cmd.step.dependOn(&elf.step);
     const flash_step = b.step("flash", "Flash and run the app.");
     flash_step.dependOn(&flash_cmd.step);
