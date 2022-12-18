@@ -94,6 +94,8 @@ LoopFillZerobss:
 /* Call the clock system initialization function.*/
   bl  SystemInit   
 /* Call static constructors */
+    /* TODO: This line requires libc but I couldn't link it
+    */
     bl __libc_init_array
 /* Call the application's entry point.*/
   bl  main

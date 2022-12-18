@@ -1,9 +1,16 @@
-export fn Reset_Handler() void {
+// export fn Reset_Handler() void {
 
+// }
+
+export fn main() u32 {
+    return 0;
 }
 
-pub fn main() void {
+export fn SystemInit() void {
+    while(true){}
 }
+
+export fn __libc_init_array() callconv(.C) void {}
 
 const std = @import("std");
 test "simple test" {

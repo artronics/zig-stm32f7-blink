@@ -12,19 +12,24 @@ pub fn build(b: *std.build.Builder) void {
     };
     const mode = b.standardReleaseOptions();
 
-    const elf = b.addExecutable("zig-stm32f7-blink.elf", "src/startup.zig");
-    b.default_step.dependOn(&elf.step);
-
-    const vector_obj = b.addObject("vector", "src/vector.zig");
-    vector_obj.setTarget(target);
-    vector_obj.setBuildMode(mode);
-    elf.addObject(vector_obj);
-
+    // const elf = b.addExecutable("zig-stm32f7-blink.elf", "src/startup.zig");
+    const elf = b.addExecutable("zig-stm32f7-blink.elf", "src/main.zig");
     elf.setTarget(target);
     elf.setBuildMode(mode);
 
+    b.default_step.dependOn(&elf.step);
+
+    const startup_obj = b.addObject("startup", thisDir() ++ "/startup_stm32f767xx.o");
+    elf.addObject(startup_obj);
+    // const main_obj = b.addObject("main", "/Users/jalal/projects/embedded/arm/nucleo-f7-example/build/main.o");
+    // elf.addObject(main_obj);
+    // const vector_obj = b.addObject("vector", "src/vector.zig");
+    // vector_obj.setTarget(target);
+    // vector_obj.setBuildMode(mode);
+    // elf.addObject(vector_obj);
+
     elf.setLinkerScriptPath(.{ .path = "data/STM32F767.ld" });
-    elf.addAssemblyFile("src/startup_stm32f767xx.s");
+    // elf.addAssemblyFile("src/startup_stm32f767xx.s");
 
     elf.install();
 
@@ -36,7 +41,7 @@ pub fn build(b: *std.build.Builder) void {
     const openocd_board = thisDir() ++ "/data/st_nucleo_f7.cfg";
 
     // TODO: use build api to get the path
-    const elf_path = thisDir() ++ "zig-out/bin/zig-stm32f7-blink.bin";
+    const elf_path = thisDir() ++ "/zig-out/bin/zig-stm32f7-blink.elf";
     // const elf_path = "/Users/jalal/projects/embedded/arm/nucleo-f7-example/build/nucleo-f7-example.elf";
     // std.log.debug("path {s}", b.getInstallPath());
 
@@ -57,7 +62,6 @@ pub fn build(b: *std.build.Builder) void {
     flash_cmd.step.dependOn(&elf.step);
     const flash_step = b.step("flash", "Flash and run the app.");
     flash_step.dependOn(&flash_cmd.step);
-
 
     const run_cmd = elf.run();
     run_cmd.step.dependOn(b.getInstallStep());

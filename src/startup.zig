@@ -7,7 +7,7 @@ extern const _edata: u32;
 extern var _sbss: u32;
 extern const _ebss: u32;
 
-export fn resetHandler() void {
+export fn Reset_Handler() void {
     // Copy data from flash to RAM
     const data_loadaddr = @ptrCast([*]const u8, &_sidata);
     const data = @ptrCast([*]u8, &_sdata);
