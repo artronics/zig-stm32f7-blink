@@ -7,8 +7,9 @@ pub fn build(b: *std.build.Builder) void {
         .cpu_arch = Target.Cpu.Arch.thumb,
         .cpu_model = .{ .explicit = &Target.arm.cpu.cortex_m7 },
         .os_tag = Target.Os.Tag.freestanding,
-        .abi = Target.Abi.eabi,
+        .abi = Target.Abi.eabihf,
     };
+    b.setPreferredReleaseMode(std.builtin.Mode.ReleaseFast);
     const mode = b.standardReleaseOptions();
 
     const elf = b.addExecutable("zig-stm32f7-blink.elf", "src/main.zig");

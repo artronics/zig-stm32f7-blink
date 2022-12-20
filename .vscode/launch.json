@@ -9,6 +9,7 @@
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceRoot}",
+            "svdPath": "${workspaceRoot}/data/STM32F767.svd",
             "environment": [],
             "externalConsole": false,
             "debugServerArgs": "-f ${workspaceRoot}/data/st_nucleo_f7.cfg -s /opt/homebrew/share/openocd/scripts -c init -c \"reset init\"",
