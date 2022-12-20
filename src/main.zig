@@ -1,10 +1,11 @@
 const stm32f767 = @import("stm32f767_registers.zig");
 const regs = stm32f767.registers;
+
 export fn main() u32 {
     systemInit();
 
+    // spell-checker: disable
     // Enable GPIOD port
-    // while (true) {}
     regs.RCC.AHB1ENR.modify(.{ .GPIOBEN = 1 });
 
     // Set pin 0/7 mode to general purpose output
@@ -13,9 +14,25 @@ export fn main() u32 {
     // Set pin 0 and 7
     regs.GPIOB.BSRR.modify(.{ .BS0 = 1, .BS7 = 1 });
 
-    while (true) {}
+    var on = true;
+    while (true) {
+        if (on) {
+            regs.GPIOB.BSRR.modify(.{ .BR0 = 1, .BR7 = 1 });
+        } else {
+            regs.GPIOB.BSRR.modify(.{ .BS0 = 1, .BS7 = 1 });
+        }
+        // Sleep for some time
+        var i: u32 = 0;
+        while (i < 600000) {
+            asm volatile ("nop");
+            i += 1;
+        }
+
+        on = !on;
+    }
 
     return 0;
+    // spell-checker: enable
 }
 
 fn systemInit() void {
@@ -24,15 +41,6 @@ fn systemInit() void {
     //spell-checker: disable
     regs.RCC.APB1ENR.modify(.{ .PWREN = 0b1 });
     while (regs.RCC.APB1ENR.read().PWREN != 1) {}
-
-    // Enable HSI
-    // regs.RCC.CR.modify(.{ .HSION = 1 });
-
-    // Wait for HSI ready
-    // while (regs.RCC.CR.read().HSIRDY != 1) {}
-
-    // Select HSI as clock source
-    // regs.RCC.CFGR.modify(.{ .SW0 = 0, .SW1 = 0 });
 
     // Enable external high-speed oscillator (HSE)
     regs.RCC.CR.modify(.{ .HSEON = 1 });
@@ -67,7 +75,7 @@ fn systemInit() void {
         .PLLN7 = 1,
         .PLLN8 = 0,
         // PLLP = 2 = 0b10
-        
+
         .PLLP0 = 0,
         .PLLP1 = 1,
         // PLLQ = 4 = 0b100
